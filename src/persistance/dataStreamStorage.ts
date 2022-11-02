@@ -72,9 +72,7 @@ export class DSStorage {
             dataStream.stopCollecting()
             // Remove from oid map 
             // TBD TEST
-            console.log(this.dsidsByOids.toString())
             this.dsidsByOids.get(dataStream.oid)!.splice(this.dsidsByOids.get(dataStream.oid)!.indexOf(dsid), 1)
-            console.log(this.dsidsByOids.toString())
             // Remove from map
             this.dataStreams.delete(dsid)
             // Store to file system

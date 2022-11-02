@@ -21,9 +21,9 @@ ApiRouter
 .get('/streams/oid/:oid', controller.getStreamsByOid)
 .get('/streams/:dsid', controller.getStream)
 .put('/streams/:dsid', controller.putStream)
-.post('/streams/:id/enable', controller.enableStream)
-.delete('/streams/:id/disable', controller.disableStream)
-.delete('/streams/:id', controller.deleteStream)
+.post('/streams/:dsid/enable', controller.enableStream)
+.delete('/streams/:dsid/disable', controller.disableStream)
+.delete('/streams/:dsid', controller.deleteStream)
 // .get('/streams/:id/data', controller.dummy)
 
 // Agent 
