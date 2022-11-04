@@ -27,7 +27,25 @@ export const dummy: DummyCtrl = async (_req, res) => {
 	}
 }
 
-type AddStreamController = expressTypes.Controller<{}, DataStreamType, {}, { }, {}>
+// Healthcheck
+type HealthcheckCtrl = expressTypes.Controller<{}, {}, {}, { status: boolean, db: boolean, dsCount: number }, {}>
+
+export const healthcheck: HealthcheckCtrl = async (_req, res) => {
+        try {
+                logger.debug('HEALTHCHECK ENDPOINT')
+                // TBD: Check DB connection
+                const dbState = true as boolean
+                const dsCount = DataStreamStorage.count()
+                return responseBuilder(HttpStatusCode.OK, res, null, { status: dbState, db: dbState, dsCount: dsCount })
+        } catch (err) {
+                const error = errorHandler(err)
+                logger.error(error.message)
+                const dsCount = DataStreamStorage.count()
+                return responseBuilder(HttpStatusCode.OK, res, null, { status: false as boolean,  db: false as boolean, dsCount: dsCount })
+        }
+}
+
+type AddStreamController = expressTypes.Controller<{}, DataStreamType, {}, {}, {}>
 
 export const addStream: AddStreamController = async (req, res) => {
         try {

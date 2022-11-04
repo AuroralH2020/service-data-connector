@@ -48,6 +48,9 @@ export class DSStorage {
         })
         fs.writeFileSync(Config.HOME_PATH + '/' + Config.DS.FILE, JSON.stringify({ ds: dataStreamToStore }, null, 2))
     }
+    public count(): number {
+        return this.dataStreams.size
+    }
     public addDataStream(ds: DataStreamType): void {
         logger.debug('Adding data stream')
         if (this.dataStreams.has(ds.dsid)) {

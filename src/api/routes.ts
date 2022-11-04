@@ -16,7 +16,8 @@ ApiRouter
 // DUMMY
 .get('/test/api', controller.dummy)
 
-// AUTHENTICATION
+// SERVICE ADMIN APP
+.get('/healthcheck', controller.healthcheck)
 .post('/streams', controller.addStream)
 .get('/streams/oid/:oid', controller.getStreamsByOid)
 .get('/streams/:dsid', controller.getStream)
