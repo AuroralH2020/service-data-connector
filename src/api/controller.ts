@@ -3,7 +3,7 @@ import { expressTypes } from '../types/index'
 import { HttpStatusCode } from '../utils/http-status-codes'
 import { logger, errorHandler } from '../utils'
 import { responseBuilder } from '../utils/response-builder'
-import { DataStreamType, dstype } from '../core/DataStream'
+import { DataStreamCreateType, DataStreamType, dstype } from '../core/DataStream'
 import { DataStreamStorage } from '../persistance/dataStreamStorage'
 import { JsonType } from '../types/misc-types'
 
@@ -32,7 +32,7 @@ type HealthcheckCtrl = expressTypes.Controller<{}, {}, {}, { status: boolean, db
 
 export const healthcheck: HealthcheckCtrl = async (_req, res) => {
         try {
-                logger.debug('HEALTHCHECK ENDPOINT')
+                logger.debug('Healthcheck')
                 // TBD: Check DB connection
                 const dbState = true as boolean
                 const dsCount = DataStreamStorage.count()
@@ -45,12 +45,12 @@ export const healthcheck: HealthcheckCtrl = async (_req, res) => {
         }
 }
 
-type AddStreamController = expressTypes.Controller<{}, DataStreamType, {}, {}, {}>
+type AddStreamController = expressTypes.Controller<{}, DataStreamCreateType, {}, DataStreamType, {}>
 
 export const addStream: AddStreamController = async (req, res) => {
         try {
-                DataStreamStorage.addDataStream(req.body)
-                return responseBuilder(HttpStatusCode.OK, res, null, {})
+                const ds = DataStreamStorage.addDataStream(req.body)
+                return responseBuilder(HttpStatusCode.OK, res, null, ds)
         } catch (err) {
                 const error = errorHandler(err)
                 logger.error(error.message)
@@ -63,6 +63,19 @@ type GetStreamsByOidCtrl = expressTypes.Controller<{oid: string}, {}, {}, DataSt
 export const getStreamsByOid: GetStreamsByOidCtrl = async (req, res) => {
         try {
                 const streams = DataStreamStorage.getDataStreamsByOid(req.params.oid)
+                return responseBuilder(HttpStatusCode.OK, res, null, streams.map(stream => stream.getObject()))
+        } catch (err) {
+                const error = errorHandler(err)
+                logger.error(error.message)
+                return responseBuilder(error.status, res, error.message)
+        }
+}
+
+type GetStreamsByServiceCtrl = expressTypes.Controller<{oid: string}, {}, {}, DataStreamType[], {}>
+
+export const getStreamsByService: GetStreamsByServiceCtrl = async (req, res) => {
+        try {
+                const streams = DataStreamStorage.getDataStreamsByService(req.params.oid)
                 return responseBuilder(HttpStatusCode.OK, res, null, streams.map(stream => stream.getObject()))
         } catch (err) {
                 const error = errorHandler(err)
@@ -88,6 +101,7 @@ type deleteStreamCtrl = expressTypes.Controller<{ dsid: string }, {}, {}, {}, {}
 
 export const deleteStream: deleteStreamCtrl = async (req, res) => {
         try {
+                logger.debug('Deleting stream: ' + req.params.dsid)
                 DataStreamStorage.removeDataSteam(req.params.dsid)
                 return responseBuilder(HttpStatusCode.OK, res, null, {})
         } catch (err) {
@@ -97,13 +111,15 @@ export const deleteStream: deleteStreamCtrl = async (req, res) => {
         }
 }
 
-type putStreamCtrl = expressTypes.Controller<{ dsid: string }, DataStreamType, {}, {}, {}>
+type putStreamCtrl = expressTypes.Controller<{ dsid: string }, DataStreamType, {}, DataStreamType, {}>
 
 export const putStream: putStreamCtrl = async (req, res) => {
         try {
-                await DataStreamStorage.updateDatastream(req.params.dsid, req.body)
-                // TBD
-                return responseBuilder(HttpStatusCode.OK, res, null, {})
+                const { dsid } = req.params
+                const ds = req.body
+                logger.debug('Updating stream: ' + dsid)
+                await DataStreamStorage.updateDatastream(dsid, ds)
+                return responseBuilder(HttpStatusCode.OK, res, null, DataStreamStorage.getDataStream(dsid).getObject())
         } catch (err) {
                 const error = errorHandler(err)
                 logger.error(error.message)
@@ -116,6 +132,7 @@ type disableStreamCtrl = expressTypes.Controller<{ dsid: string }, {}, {}, {}, {
 export const disableStream: disableStreamCtrl = async (req, res) => {
         const dsid = req.params.dsid
         try {
+                logger.debug('Disabling stream: ' + dsid)
                 await DataStreamStorage.getDataStream(dsid).update({ enabled: false })
                 return responseBuilder(HttpStatusCode.OK, res, null, {})
         } catch (err) {
@@ -130,6 +147,7 @@ type enableStreamCtrl = expressTypes.Controller<{ dsid: string }, {}, {}, {}, {}
 export const enableStream: enableStreamCtrl = async (req, res) => {
         const dsid = req.params.dsid
         try {
+                logger.debug('Enabling stream: ' + dsid)
                 await DataStreamStorage.getDataStream(dsid).update({ enabled: true })
                 return responseBuilder(HttpStatusCode.OK, res, null, {})
         } catch (err) {

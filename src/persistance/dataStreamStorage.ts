@@ -1,7 +1,8 @@
 import * as fs from 'fs'
+import { v4 } from 'uuid'
 import { Config } from '../config'
 import { HttpStatusCode, logger, MyError } from '../utils'
-import { DataStream, DataStreamType } from '../core/DataStream'
+import { DataStream, DataStreamCreateType, DataStreamType } from '../core/DataStream'
 
 export class DSStorage {
     private loaded: boolean = false
@@ -51,21 +52,23 @@ export class DSStorage {
     public count(): number {
         return this.dataStreams.size
     }
-    public addDataStream(ds: DataStreamType): void {
+    public addDataStream(ds: DataStreamCreateType & { dsid?:string }): DataStreamType {
         logger.debug('Adding data stream')
-        if (this.dataStreams.has(ds.dsid)) {
+        const dsid = ds.dsid ? ds.dsid : v4()
+        if (this.dataStreams.has(dsid)) {
             throw new MyError('Data stream already exists', HttpStatusCode.BAD_REQUEST)
         }
-        this.dataStreams.set(ds.dsid, new DataStream(ds))
+        this.dataStreams.set(dsid, new DataStream({ ...ds, dsid }))
         // Add to oid map
         if (this.dsidsByOids.has(ds.oid)) {
-            this.dsidsByOids.get(ds.oid)!.push(ds.dsid)
+            this.dsidsByOids.get(ds.oid)!.push(dsid)
         } else {
-            this.dsidsByOids.set(ds.oid, [ds.dsid])
+            this.dsidsByOids.set(ds.oid, [dsid])
         }
-        this.dataStreams.get(ds.dsid)!.startCollecting()
+        this.dataStreams.get(dsid)!.startCollecting()
         // Store to file system 
         this.store()
+        return this.dataStreams.get(dsid)?.getObject()!
     }
 
     public removeDataSteam(dsid: string): void {
@@ -113,6 +116,17 @@ export class DSStorage {
         } else {
             return []
         }
+    }
+    
+    public getDataStreamsByService(serviceId: string): DataStream[] {
+        const dataStreams: DataStream[] = []
+        this.dataStreams.forEach((ds) => {
+            // TBD optimize
+            if (ds.service === serviceId) {
+                dataStreams.push(ds)
+            }
+        })
+        return dataStreams
     }
 
     // Private methods

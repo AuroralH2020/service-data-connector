@@ -10,7 +10,7 @@ export enum dstype {
 }
 
 export type DataStreamType = {
-    enabled: boolean,
+    enabled?: boolean,
     dsid: string,
     oid: string,
     agid: string,
@@ -20,9 +20,24 @@ export type DataStreamType = {
     service: string,
     reguestUrl: string,
     monitors: string,
-    frequency: number,
-    querryParams: JsonType,
-    body: JsonType
+    frequency?: number,
+    querryParams?: JsonType,
+    body?: JsonType
+}
+
+export type DataStreamCreateType = {
+    enabled?: boolean,
+    oid: string,
+    agid: string,
+    cid: string,
+    iid: string,
+    type: dstype,
+    service: string,
+    reguestUrl: string,
+    monitors: string,
+    frequency?: number,
+    querryParams?: JsonType,
+    body?: JsonType
 }
 
 export type DataStreamUpdateType = {
