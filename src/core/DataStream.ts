@@ -1,4 +1,4 @@
-import { errorHandler, logger } from '../utils'
+import { errorHandler, HttpStatusCode, logger, MyError } from '../utils'
 import { agent } from '../microservices/agent-miniConnector'
 import { JsonType } from '../types/misc-types'
 import { dbConnector } from './DBConnector'
@@ -239,11 +239,11 @@ export class DataStream {
         this._lastValue = data
         try {
             if (!data.makesMeasurement) {
-                logger.error('Response is not in standard AURORAL format')
+                throw new MyError('Response is not in standard AURORAL format', HttpStatusCode.BAD_REQUEST)
             }
             for (const measurement of data.makesMeasurement) {
                 if (!measurement.hasValue) {
-                    logger.error('Response is not in standard AURORAL format')
+                    throw new MyError('Response is not in standard AURORAL format', HttpStatusCode.BAD_REQUEST)
                 }
                 try {
                     await dbConnector.writeData({

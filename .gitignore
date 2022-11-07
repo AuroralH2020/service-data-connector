@@ -9,6 +9,7 @@
 .env
 .token
 ds.json
+output.csv
 
 # Tests
 .scannerwork/

@@ -1,7 +1,8 @@
-import { InfluxConnector } from '../microservices/influx-connector'
-
 import { Config } from '../config';
 import { DBConnectorInterface, DBSearch, DBType } from '../types/db-connector-types'
+import { CsvFileConnector } from '../microservices/csv-file-connector'
+import { InfluxConnector } from '../microservices/influx-connector'
+
 
 export class DBConnector implements DBConnectorInterface {
     // Singleton
@@ -17,6 +18,9 @@ export class DBConnector implements DBConnectorInterface {
         switch (Config.DB_TYPE) {
             case DBType.Influx:
                 this.db = new InfluxConnector()
+                break
+            case DBType.Csv:
+                this.db = new CsvFileConnector()
                 break
             default:
                 throw new Error('DB_TYPE not supported')

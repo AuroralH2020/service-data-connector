@@ -20,6 +20,10 @@ export const Config = {
 		ORG: process.env.INFLUXDB_ORG ? process.env.INFLUXDB_ORG : 'my-org',
 		BUCKET: process.env.INFLUXDB_BUCKET ? process.env.INFLUXDB_BUCKET : 'bucket0'
 	},
+	CSV_FILE: {
+		OUTPUT: process.env.CSV_FILE_OUTPUT ? process.env.CSV_FILE_OUTPUT : 'output.csv',
+		DELIMITER: process.env.CSV_FILE_DELIMITER ? process.env.CSV_FILE_DELIMITER : ',',
+	},
 	DS: {
 		FILE: process.env.DS_FILE ? process.env.DS_FILE : 'dataStreams.json'
 	}

@@ -60,9 +60,8 @@ const server = startServer()
 
 // gracefully shut down server
 function shutdown() {
-  // TBD Close InfluxDB
+  // Closing DB connectors
   dbConnector.close().then(() => {
-    logger.info('InfluxDB connection closed')
     DataStreamStorage.store()
     process.exit()
   })

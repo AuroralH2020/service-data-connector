@@ -21,6 +21,7 @@ export type DBSearch = {
 
 export enum DBType {
     Influx = 'influx',
+    Csv = 'csv',
     // SQLite = 'sqlite',
     // MongoDB = 'mongodb',
     // MySQL = 'mysql',
