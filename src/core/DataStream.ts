@@ -18,10 +18,10 @@ export type DataStreamType = {
     iid: string,
     type: dstype,
     service: string,
-    reguestUrl: string,
+    requestUrl: string,
     monitors: string,
     frequency?: number,
-    querryParams?: JsonType,
+    queryParams?: JsonType,
     body?: JsonType
 }
 
@@ -33,10 +33,10 @@ export type DataStreamCreateType = {
     iid: string,
     type: dstype,
     service: string,
-    reguestUrl: string,
+    requestUrl: string,
     monitors: string,
     frequency?: number,
-    querryParams?: JsonType,
+    queryParams?: JsonType,
     body?: JsonType
 }
 
@@ -44,7 +44,7 @@ export type DataStreamUpdateType = {
     enabled?: boolean,
     monitors?: string,
     frequency?: number,
-    querryParams?: JsonType,
+    queryParams?: JsonType,
     body?: JsonType
 }
 
@@ -58,7 +58,7 @@ export class DataStream {
     readonly dsid: string
     readonly iid: string
     readonly service: string
-    readonly reguestUrl: string
+    readonly requestUrl: string
     readonly monitors: string
     readonly streamType: dstype
     private enabled: boolean
@@ -79,7 +79,7 @@ export class DataStream {
    
     // Creating event channel
     constructor(dataStream: DataStreamType) {
-        if (!dataStream.dsid || !dataStream.oid || !dataStream.agid || !dataStream.cid || !dataStream.iid || !dataStream.type || !dataStream.service || !dataStream.reguestUrl || !dataStream.monitors) {
+        if (!dataStream.dsid || !dataStream.oid || !dataStream.agid || !dataStream.cid || !dataStream.iid || !dataStream.type || !dataStream.service || !dataStream.requestUrl || !dataStream.monitors) {
             throw new Error('Missing dataStream properties')
         }
         this.dsid = dataStream.dsid
@@ -88,14 +88,14 @@ export class DataStream {
         this.agid = dataStream.agid
         this.cid = dataStream.cid
         this.dsid = dataStream.dsid
-        this.reguestUrl = dataStream.reguestUrl
+        this.requestUrl = dataStream.requestUrl
         this.iid = dataStream.iid
         this.service = dataStream.service
         this.monitors = dataStream.monitors
         this.streamType = dataStream.type
         this.frequency = dataStream.frequency ? dataStream.frequency : 600000 
         this.body = dataStream.body ? dataStream.body : {}
-        this.queryParams = dataStream.querryParams ? dataStream.querryParams : {}
+        this.queryParams = dataStream.queryParams ? dataStream.queryParams : {}
         // Start collecting data
         if (this.enabled) {
             this.startCollecting()
@@ -111,10 +111,10 @@ export class DataStream {
             iid: this.iid,
             type: this.streamType,
             service: this.service,
-            reguestUrl: this.reguestUrl,
+            requestUrl: this.requestUrl,
             monitors: this.monitors,
             frequency: this.frequency,
-            querryParams: this.queryParams,
+            queryParams: this.queryParams,
             body: this.body
         }
     }
@@ -129,7 +129,7 @@ export class DataStream {
         } else {
             logger.debug('Subscribing to event stream')
             try {
-                await agent.subscribeToEvent(this.reguestUrl)
+                await agent.subscribeToEvent(this.requestUrl)
                 this.enabled = true
             } catch (error) {
                 logger.error(`Error subscribing to event stream: ${error}`)
@@ -145,7 +145,7 @@ export class DataStream {
         } else {
             logger.debug('Unsubscribing to event stream')
             try {
-                await agent.unsubscribeEvent(this.reguestUrl)
+                await agent.unsubscribeEvent(this.requestUrl)
                 this.enabled = false
             } catch (error) {
                 logger.error(`Error unsubscribing to event stream: ${error}`)
@@ -167,8 +167,8 @@ export class DataStream {
                 ds.enabled = true
             }
         }
-        if (ds.querryParams) {
-            this.queryParams = ds.querryParams
+        if (ds.queryParams) {
+            this.queryParams = ds.queryParams
         }  
         if (ds.body) {
             this.body = ds.body
@@ -222,13 +222,13 @@ export class DataStream {
     }
     private async getData(): Promise<void> {
         let data: JsonType = {}
-        logger.debug(`Collecting data from ${this.reguestUrl}`)
+        logger.debug(`Collecting data from ${this.requestUrl}`)
         try {
             if (this.streamType === dstype.READ_PROPERTY) {
-                data = (await agent.getRequest(this.reguestUrl, this.queryParams)).message
+                data = (await agent.getRequest(this.requestUrl, this.queryParams)).message
             }
             if (this.streamType === dstype.WRITE_PROPERTY) {
-                data = (await agent.postRequest(this.reguestUrl, this.body, this.queryParams)).message
+                data = (await agent.postRequest(this.requestUrl, this.body, this.queryParams)).message
             }
         } catch (err) {
             const error = errorHandler(err)
