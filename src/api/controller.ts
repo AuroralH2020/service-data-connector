@@ -127,14 +127,15 @@ export const putStream: putStreamCtrl = async (req, res) => {
         }
 }
 
-type disableStreamCtrl = expressTypes.Controller<{ dsid: string }, {}, {}, {}, {}>
+type disableStreamCtrl = expressTypes.Controller<{ dsid: string }, {}, {}, DataStreamType, {}>
 
 export const disableStream: disableStreamCtrl = async (req, res) => {
         const dsid = req.params.dsid
         try {
                 logger.debug('Disabling stream: ' + dsid)
-                await DataStreamStorage.getDataStream(dsid).update({ enabled: false })
-                return responseBuilder(HttpStatusCode.OK, res, null, {})
+                const ds = DataStreamStorage.getDataStream(dsid)
+                await ds.update({ enabled: false })
+                return responseBuilder(HttpStatusCode.OK, res, null, ds.getObject())
         } catch (err) {
                 const error = errorHandler(err)
                 logger.error(error.message)
@@ -142,14 +143,15 @@ export const disableStream: disableStreamCtrl = async (req, res) => {
         }
 }
 
-type enableStreamCtrl = expressTypes.Controller<{ dsid: string }, {}, {}, {}, {}>
+type enableStreamCtrl = expressTypes.Controller<{ dsid: string }, {}, {}, DataStreamType, {}>
 
 export const enableStream: enableStreamCtrl = async (req, res) => {
         const dsid = req.params.dsid
         try {
                 logger.debug('Enabling stream: ' + dsid)
-                await DataStreamStorage.getDataStream(dsid).update({ enabled: true })
-                return responseBuilder(HttpStatusCode.OK, res, null, {})
+                const ds = DataStreamStorage.getDataStream(dsid)
+                await ds.update({ enabled: true })
+                return responseBuilder(HttpStatusCode.OK, res, null, ds.getObject())
         } catch (err) {
                 const error = errorHandler(err)
                 logger.error(error.message)
