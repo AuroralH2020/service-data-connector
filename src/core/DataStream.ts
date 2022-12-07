@@ -93,7 +93,7 @@ export class DataStream {
         this.service = dataStream.service
         this.monitors = dataStream.monitors
         this.streamType = dataStream.type
-        this.frequency = dataStream.frequency ? dataStream.frequency : 600000 
+        this.frequency = dataStream.frequency ? dataStream.frequency : 20000
         this.body = dataStream.body ? dataStream.body : {}
         this.queryParams = dataStream.queryParams ? dataStream.queryParams : {}
         // Start collecting data
