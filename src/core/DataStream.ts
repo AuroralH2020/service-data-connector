@@ -238,17 +238,17 @@ export class DataStream {
         // Save data to database
         this._lastValue = data
         try {
-            if (!data.makesMeasurement) {
+            if (!data.measurement) {
                 throw new MyError('Response is not in standard AURORAL format', HttpStatusCode.BAD_REQUEST)
             }
-            for (const measurement of data.makesMeasurement) {
-                if (!measurement.hasValue) {
+            for (const measurement of data.measurement) {
+                if (!measurement.value) {
                     throw new MyError('Response is not in standard AURORAL format', HttpStatusCode.BAD_REQUEST)
                 }
                 try {
                     await dbConnector.writeData({
                         dsid: this.dsid,
-                        value: measurement.hasValue,
+                        value: measurement.value,
                         timestamp: measurement.hasTimestamp ? new Date(measurement.hasTimestamp) : new Date(),
                         tags: [
                             { name: 'cid', value: this.cid },
@@ -268,7 +268,7 @@ export class DataStream {
             try {
                 await dbConnector.writeData({
                     dsid: this.dsid,
-                    value: data,
+                    value: JSON.stringify(data),
                     timestamp: new Date(),
                 })
             } catch (err) {
