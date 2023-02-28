@@ -36,7 +36,7 @@ In standalone mode it is necessary to provide configuration file.
 - DS_FILE - path to the file with data streams configuration
 - DS_TYPE:
   -  csv - data will be stored in csv file
-  -  influxdb - data will be stored in InfluxDB
+  -  influx - data will be stored in InfluxDB
 - INFLUXDB_URL - url of InfluxDB (IF using Influx)
 - INFLUXDB_USER - user of InfluxDB (IF using Influx)
 - INFLUXDB_PASSWORD - password of InfluxDB (IF using Influx)
