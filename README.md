@@ -24,7 +24,7 @@ In standalone mode it is necessary to provide configuration file.
       "service": "<oid_of_my_service>",
       "requestUrl": "<url_where_to_get_data>",
       "monitors": "<monitors>",
-      "frequency": <frequency_in_ms>,
+      "frequency": "<frequency_in_ms>",
       "queryParams": {},
       "body": {}
     }
@@ -37,12 +37,12 @@ In standalone mode it is necessary to provide configuration file.
 - DS_TYPE:
   -  csv - data will be stored in csv file
   -  influxdb - data will be stored in InfluxDB
-- INFLUXDB_URL - url of InfluxDB
-- INFLUXDB_USER - user of InfluxDB
-- INFLUXDB_PASSWORD - password of InfluxDB
-- INFLUXDB_ORG - organization of InfluxDB
-- INFLUXDB_BUCKET - bucket of InfluxDB
-- INFLUXDB_TOKEN - token of InfluxDB
+- INFLUXDB_URL - url of InfluxDB (IF using Influx)
+- INFLUXDB_USER - user of InfluxDB (IF using Influx)
+- INFLUXDB_PASSWORD - password of InfluxDB (IF using Influx)
+- INFLUXDB_ORG - organization of InfluxDB (IF using Influx)
+- INFLUXDB_BUCKET - bucket of InfluxDB (IF using Influx)
+- INFLUXDB_TOKEN - token of InfluxDB (IF using Influx)
 
 
 ### Deployment
